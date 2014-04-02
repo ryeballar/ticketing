@@ -275,6 +275,23 @@ controller('BookingTicketController',
 ['$scope', '$http', '$cookieStore', '$routeParams',
 function($scope, $http, $cookieStore, $routeParams) {
 	$scope.at_id = $routeParams.at_id;
+
+	var passenger = $cookieStore.get('passenger');
+	var fs_id = $cookieStore.get('sched_id');
+	var accomodation = $cookieStore.get('accomodation');
+
+	$scope.passenger = passenger;
+	$scope.fs_id = fs_id;
+	$scope.accomodation = accomodation;
+
+	$http({
+		method: 'GET',
+		url: 'ci/flight',
+		params: {fs_id: fs_id}
+	}).success(function(data) {
+		$scope.flight = data[0];
+	});
+	
 }]).
 
 filter('group', function() {
