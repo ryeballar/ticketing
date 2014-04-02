@@ -6,7 +6,7 @@
 				<div class="row">
 					<div class="col-md-6">
 						<label for="sel-airline-company">Airline Company</label>
-						<select ng-model="ac_id" id="sel-airline-company" class="form-control"
+						<select ng-change="change()" ng-model="ac_id" id="sel-airline-company" class="form-control"
 							ng-options="record.ac_id as record.ac_name for record in airlineCompanies">
 							<option value="">All Companies</option>
 						</select>

@@ -1,8 +1,8 @@
 <div class="row std-view">
 	<div class="col-md-5 col-md-offset-4 form-container">
 		<h4>CREATE YOUR ACCOUNT</h4>
-		Already registered? <a href="login">Login</a> here.<br/><hr>
-		<form-validate url="ci/member/signup" redirect="/login">
+		Already registered? <a href="http://localhost/report/login.php">Login</a> here.<br/><hr>
+		<form-validate url="ci/member/signup" force="http://localhost/report/login.php">
 			<form-group control="member.member_name">
 				<label for="signup-name">Name</label>
 				<input type="text" class="form-control" id="signup-name" 

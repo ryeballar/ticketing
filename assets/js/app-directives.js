@@ -32,6 +32,8 @@ directive('formValidate', ['$compile', function($compile) {
 					if(data.success) {
 						if($scope.redirect)
 							$location.path($scope.redirect);
+						else if($scope.force)
+							window.location.replace($scope.force);
 					} else {
 						var errors = data.errors;
 						for(var index in errors) {
@@ -50,6 +52,7 @@ directive('formValidate', ['$compile', function($compile) {
 		link: function(scope, elem, attr) {
 			scope.url = elem.attr('url');
 			scope.redirect = elem.attr('redirect');
+			scope.force = elem.attr('force');
 		}
 	}
 }]).

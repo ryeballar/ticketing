@@ -2,7 +2,7 @@ angular.module('app').controller('PageHeaderController', ['$scope', function($sc
 	$scope.nav = [
 		{icon: 'icon-home', label: 'Home', url: '#'},
 		{icon: 'icon-plane', label: 'Flight Schedules', url: 'flights'},
-		{icon: 'icon-user', label: 'Login', url: 'login'},
+		{icon: 'icon-user', label: 'Login', url: 'http://localhost/report/login.php'},
 		{icon: 'icon-user', label: 'Sign Up', url: 'signup'},
 	];
 
@@ -120,6 +120,10 @@ function($scope, $filter, $http, $routeParams, $location, $cookieStore) {
 			$scope.available_seats = $scope.max_seats;
 	};
 
+	$scope.change = function() {
+		console.log($scope);
+	};
+
 	$scope.search = function() {
 		var params = {
 			ac_id: $scope.ac_id || 0,
@@ -132,6 +136,8 @@ function($scope, $filter, $http, $routeParams, $location, $cookieStore) {
 			destination_from: $scope.destination_from || 0,
 			destination_to: $scope.destination_to || 0
 		};
+
+		console.log(params);
 
 		$http({
 			method: 'GET',
