@@ -25,8 +25,8 @@
 			</div>
 
 			<div class="row">
-				<div class="col-md-6"><label for="start-price">Start Price</label><input type="number" ng-model="price_start" min="{{price_min}}" max="{{price_max}}" id="start-price" class="form-control" ng-change="price_start = getPrice(price_start)"></div>
- 				<div class="col-md-6"><label for="end-price">End Price</label><input type="number" ng-model="price_end" min="{{price_min}}" max="{{price_max}}" class="form-control" id="end-price" ng-change="price_end = getPrice(price_end)"></div>
+				<div class="col-md-6"><label for="start-price">Start Price</label><input type="number" ng-model="price_start" min="{{price_min}}" max="{{price_max}}" id="start-price" class="form-control"></div>
+ 				<div class="col-md-6"><label for="end-price">End Price</label><input type="number" ng-model="price_end" min="{{price_min}}" max="{{price_max}}" class="form-control" id="end-price"></div>
 			</div>
 
 		</div>
@@ -58,6 +58,8 @@
 	</div>
 </form>
 <hr>
+
+<h4 class="text-center" ng-if="flightGroupItem.length == 0"><em>No Flight Schedules Found</em></h4>
 
 <div class="row" ng-repeat="flightGroup in flightGroupItem">
 	<div class="well flight-item col-md-4" ng-repeat="flight in flightGroup">

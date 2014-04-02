@@ -83,14 +83,18 @@ class Flight extends CI_Controller {
 						$price_start_valid = false;
 						$price_end_valid = false;
 						foreach($accom_data as $k => $v) {
-							if(!$price_start && $v['fare'] >= $price_start)
+							if($v['fare'] >= $price_start)
 								$price_start_valid = true;
-							if(!$price_start && $v['fare'] <= $price_end)
+							if($v['fare'] <= $price_end)
 								$price_end_valid = true;
 						}
 
+						if(!$price_start_valid && !$price_end_valid)
+							$keys[] = $key;
 					}
-				}
+				} elseif(!in_array($key, $keys))
+					$keys[] = $key;
+
 				$data[$key]['accomodations'] = $accom_data;
 
 				$query = $this->db->query("
