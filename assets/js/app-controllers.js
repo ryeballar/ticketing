@@ -1,12 +1,7 @@
 angular.module('app').controller('PageHeaderController', ['$scope', function($scope) {
 	$scope.nav = [
-		{icon: 'icon-plane', label: 'Home', url: '#'},
-		{icon: 'icon-user', label: 'Passenger', 
-			dropdown: [
-				{label: 'Booking', url: 'booking'},
-				{label: 'Airline Companies', url: 'airline-companies'}
-			]
-		},
+		{icon: 'icon-home', label: 'Home', url: '#'},
+		{icon: 'icon-plane', label: 'Flight Schedules', url: 'flights'},
 		{icon: 'icon-user', label: 'Login', url: 'login'},
 		{icon: 'icon-user', label: 'Sign Up', url: 'signup'},
 	];
@@ -62,163 +57,194 @@ controller('LoginController', ['$scope', function($scope) {
 	};
 }]).
 
-controller('BookingController', 
-	['$scope', '$http', '$filter', 
-	'$timeout', '$cookieStore', '$location', 
-	'$route', 'GetAll', 
-	function($scope, $http, $filter, 
-			$timeout, $cookieStore, $location, 
-			$route, GetAll) {
-	
-	loadData();
-	
-	$scope.continue = function($event) {
-		$event.preventDefault();
-		$event.stopPropagation();
-		$cookieStore.put('booking.steps_active', ++$scope.steps_active);
-		$cookieStore.put('booking.data', $scope.data);
-		$cookieStore.put('booking.latest_step', $scope.steps_active);
-		$scope.latest_step = $scope.steps_active;
-		populateScheduleStep();
-	};
+controller('FlightController', 
+['$scope', '$filter', '$http', '$routeParams', '$location', '$cookieStore',
+function($scope, $filter, $http, $routeParams, $location, $cookieStore) {
+	$scope.accomodation = {};
 
-	$scope.cancel = function() {
-		removeData();
-		$route.reload();
-	};
+	$http.get('ci/airline_company').success(function(data) {
+		$scope.airlineCompanies = data;
+	});
 
-	function populateScheduleStep() {
-		GetAll('flight_schedule', {
-			date: $scope.data.dept_date,
-			ac_id: $scope.data.ac
-		}).then(function(data) {
-			$scope.flight_schedules = data;
-			$scope.models = [];
-			for(var e in $scope.flight_schedules)
-				$scope.models[e] = $scope.flight_schedules[e].accomodations[0];
-		});
-	}
+	$http.get('ci/agency').success(function(data) {
+		$scope.agencies = data;
+	});
 
-	$scope.selectAgency = function() {
-		var record = $scope.data.agency;
-		if(record) {
-			GetAll('airline_company/search_by_agency', {
-				agency_id: record.agency_id
-			}).then(function(data) {
-				$scope.airline_companies = data;
-			});
+	$scope.ac_id = $routeParams.ac_id;
+	$scope.agency_id = $routeParams.agency_id;
+
+	$scope.start_date = $routeParams.start_date || $filter('date')(new Date, 'yyyy-MM-dd');
+	$scope.end_date = $routeParams.end_date || $scope.start_date;
+
+	$http.get('ci/accomodation/get_min_max').success(function(data) {
+		$scope.price_min = parseFloat(data.min.fare);
+		$scope.price_max = parseFloat(data.max.fare);
+
+		$scope.price_start = getPrice($routeParams.start_price || $scope.price_min);
+		$scope.price_end = getPrice($routeParams.end_price || $scope.price_max);
+	});
+
+	if($routeParams.seats > 0)
+		$scope.available_seats = parseFloat($routeParams.seats);
+	else
+		$scope.available_seats = parseFloat(1);
+
+	$scope.destination_from = $routeParams.from;
+	$scope.destination_to = $routeParams.to;
+
+	$http.get('ci/airline/get_max_seats').success(function(data) {
+		$scope.max_seats = data.al_max;
+	});
+
+	$http.get('ci/place').success(function(data) {
+		$scope.places = data;
+	});
+
+	$scope.getPrice = getPrice;
+
+	$scope.validate = function(event, fs_id) {
+		if(angular.isDefined($scope.accomodation[fs_id])) {
+			$cookieStore.put('accomodation', $scope.accomodation[fs_id]);
+			$location.path('booking/entry/' + fs_id);
+		} else {
+			event.preventDefault();
+			event.stopPropagation();
+			alert('Select an accomodation first');
 		}
 	};
 
-	$scope.changeGuests = function() {
-		var limit = $scope.data.guest_limit;
-
-		while($scope.data.guests.length > limit)
-			$scope.data.guests.pop();
-
-		while($scope.data.guests.length < limit) {
-			$scope.data.guests.push({
-				ps_name: '',
-				ps_address: '',
-				p_stel: '',
-				ps_fax: '',
-				ps_email: '',
-				ps_bdate: $filter("date")(Date.now(), 'yyyy-MM-dd'),
-				ps_contact_person: '',
-				ps_contact_tel: ''
-			});
-		}
-
+	$scope.changeAvailableSeat = function() {
+		if($scope.available_seats < 1) 
+			$scope.available_seats = 1;
+		if($scope.available_seats > $scope.max_seats)
+			$scope.available_seats = $scope.max_seats;
 	};
 
-	$scope.goTo = function(index) {
-		$cookieStore.put('booking.steps_active', index);
-		loadData();
-	};
-
-	$scope.select = function(sched, accom) {
-		$scope.sched = sched;
-		$scope.accom = accom;
-		$cookieStore.put('booking.steps_active', ++$scope.steps_active);
-		$cookieStore.put('booking.sched', sched);
-		$cookieStore.put('booking.accom', accom);
-		$cookieStore.put('booking.latest_step', $scope.steps_active);
-		$scope.latest_step = $scope.steps_active;
-	};
-
-	$scope.payLater = function() {
-		$http({
-			url: 'ci/booking/save',
-			method: 'GET',
-			params: {
-				data: $scope.data,
-				accom: $scope.accom,
-				sched: $scope.sched
-			}
-		}).success(function(data) {
-			console.log(data);
-			$location.path('/itinerary/' + data['from'] + '/' + data['to']);
-		});
-	};
-
-	$timeout(function() {
-		$scope.data.guest_limit = 1;
-		$scope.changeGuests();
-	}, 500);
-
-	$scope.steps = [
-		{label: 'Booking', templateUrl: 'templates/booking/step1.html'},
-		{label: 'Schedules', templateUrl: 'templates/booking/step2.html'},
-		{label: 'Ticket Summary', templateUrl: 'templates/booking/step3.html'},
-		{label: 'Payments', templateUrl: 'templates/booking/step4.html'}
-	];
-
-	function loadData() {
-		$scope.data = $cookieStore.get('booking.data') || {
-			agency: '',
-			ac: '',
-			dept_date: $filter("date")(Date.now(), 'yyyy-MM-dd'),
-			guest_limit: '',
-			guests: []
+	$scope.search = function() {
+		var params = {
+			ac_id: $scope.ac_id || 0,
+			agency_id: $scope.agency_id || 0,
+			start_date: $scope.start_date,
+			end_date: $scope.end_date,
+			price_start: $scope.price_start,
+			price_end: $scope.price_send,
+			available_seats: $scope.available_seats,
+			destination_from: $scope.destination_from || 0,
+			destination_to: $scope.destination_to || 0
 		};
 
-		$scope.sched = $cookieStore.get('booking.sched') || null;
-		$scope.accom = $cookieStore.get('booking.accom') || null;
-		$scope.steps_active = $cookieStore.get('booking.steps_active') || 0;
-		$scope.latest_step = $cookieStore.get('booking.latest_step') || 0;
+		$http({
+			method: 'GET',
+			params: params,
+			url: 'ci/flight'
+		}).success(function(data) {
+			$scope.flightGroupItem = $filter('group')(data, 3);
+			console.log(data);
+		}).error(function(msg) {
+			console.log(msg);
+		});
+	};
 
-		switch($scope.steps_active) {
-			case 0:
-				GetAll('agency').then(function(data) {
-					$scope.agencies = data;
-				});
+	$scope.search();
 
-				GetAll('airline_company').then(function(data) {
-					$scope.airline_companies = data;
-				});
-
-			break;
-			case 1: populateScheduleStep(); break;
-		}
-	}	
-
-	function removeData() {
-		$cookieStore.remove('booking.sched');
-		$cookieStore.remove('booking.accom');
-		$cookieStore.remove('booking.steps_active');
-		$cookieStore.remove('booking.latest_step');
-		$cookieStore.remove('booking.data');
+	function getPrice(price) {
+		if(price < $scope.price_min) return $scope.price_min;
+		if(price > $scope.price_max) return $scope.price_max;
+		return price;
 	}
 
 }]).
 
-controller('ItineraryController', ['$scope', '$http', '$routeParams', 'GetAll', function($scope, $http, $routeParams, GetAll) {
-	$http.post('ci/booking/search_range', {
-		from: $routeParams.bk_id_from,
-		to: $routeParams.bk_id_to,
+controller('BookingEntryController', 
+['$scope', '$http', '$cookieStore', '$routeParams', '$location',
+function($scope, $http, $cookieStore, $routeParams, $location) {
+
+	$scope.data = {};
+
+	$http({
+		method: 'GET',
+		url: 'ci/flight',
+		params: {fs_id: $routeParams.sched_id}
 	}).success(function(data) {
-		$scope.booking = data;
-		console.log(data);
+		$scope.flight = data[0];
+		console.log($scope.flight);
 	});
 
-}]);
+	$scope.saveToCookies = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		$cookieStore.put('passenger', $scope.data);
+		$cookieStore.put('sched_id', $routeParams.sched_id);
+
+		$location.path('booking/summary');
+	}
+}]).
+
+controller('BookingSummaryController',
+['$scope', '$http', '$cookieStore', '$location',
+function($scope, $http, $cookieStore, $location) {
+	var passenger = $cookieStore.get('passenger');
+	var fs_id = $cookieStore.get('sched_id');
+	var accomodation = $cookieStore.get('accomodation');
+
+	$scope.passenger = passenger;
+	$scope.fs_id = fs_id;
+	$scope.accomodation = accomodation;
+
+	$http({
+		method: 'GET',
+		url: 'ci/flight',
+		params: {fs_id: fs_id}
+	}).success(function(data) {
+		$scope.flight = data[0];
+	});
+
+	$scope.payNow = function() {
+
+	};
+
+	$scope.payLater = function() {
+		$http.post('ci/booking/save',{
+			passenger: passenger,
+			fs_id: fs_id,
+			accom_id: accomodation.accom_id
+		}).success(function(data) {
+			$location.path('booking/number/' + data.bk_id);
+		}).error(function(msg) {
+			console.log(msg);
+		});
+	};
+
+	$scope.cancel = function() {
+		$cookieStore.remove('passenger');
+		$cookieStore.remove('sched_id');
+		$cookieStore.remove('accomodation');
+		$location.path('flights');
+	};
+}]).
+
+controller('BookingNumberController', 
+['$scope', '$routeParams',
+function($scope, $routeParams) {
+	$scope.bk_id = $routeParams.bk_id;
+}
+]).
+
+filter('group', function() {
+    return function(items, groupItems) {
+        if (items) {
+            var newArray = [];
+
+            for (var i = 0; i < items.length; i+=groupItems) {
+                if (i + groupItems > items.length) {
+                    newArray.push(items.slice(i));
+                } else {
+                    newArray.push(items.slice(i, i + groupItems));
+                }
+            }
+
+            return newArray;
+        }
+    };
+});;

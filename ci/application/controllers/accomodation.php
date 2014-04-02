@@ -6,11 +6,9 @@ class Accomodation extends CI_Controller {
 		parent::__construct();
 	}
 
-	function index() {
-		$ac_id = $this->input->get('ac_id');
-		$data = $this->table_accomodation->alias('acc')->
-			join('airline_accomodation alc', 'alc.accom_id = acc.accom_id')->
-			get_multiple();
+	function get_min_max() {
+		$data['min'] = $this->table_airline_accomodation->select_min('fare')->get_single();
+		$data['max'] = $this->table_airline_accomodation->select_max('fare')->get_single();
 		echo json_encode($data);
-	}
+	}	
 }

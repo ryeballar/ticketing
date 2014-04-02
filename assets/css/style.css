@@ -253,6 +253,7 @@ body
 .navbar {
   	border: 0 !important;
   	margin: 0;
+  	z-index: 1000;
 }
 
 .navbar .container-fluid {
@@ -526,4 +527,26 @@ section[ng-view] {
 
 .bold {
 	font-weight: bold;
+}
+
+.flight-filter {
+	z-index: 100;
+}
+
+.flight-filter .row, .flight-filter .header {
+	padding-left: 1em !important;
+	padding-right: 1em !important;
+}
+
+.flight-item {
+	padding-left: 2em;
+	margin: 0;
+}
+
+.flight-item div {
+	padding-left: 1em;
+}
+
+.text-margin {
+	margin-left: 1em;
 }

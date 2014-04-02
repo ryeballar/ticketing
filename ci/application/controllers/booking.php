@@ -1,4 +1,4 @@
-<?php if(!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Booking extends CI_Controller {
 
@@ -11,33 +11,24 @@ class Booking extends CI_Controller {
 	}
 
 	function save() {
-		$data = json_decode($this->input->get('data'));
-		$passengers = $data->guests;
-		$sched = json_decode($this->input->get('sched'));
-		$accom = json_decode($this->input->get('accom'));
+		$passenger = P('passenger');
+		$fs_id = P('fs_id');
+		$accom_id = P('accom_id');
 
-		if(is_array($passengers)) {
-			foreach($passengers as $ps) {
-				$this->table_passenger->insert($ps);
-				$bk['bk_gross'] = $accom['al_ac_fare'];
-				$bk['ps_id'] = $ps['ps_id'];
-				$bk['fs_id'] = $sched['fs_fs_id'];
-				$bk['accom_id'] = $accom['accom_accom_id'];
-				$this->table_booking->insert($bk);
-			}
-		}
+		$this->table_passenger->insert($passenger);
+		$ps_id = $this->table_passenger->insert_id();
 
-		$info['to'] = $this->table_booking->insert_id();
-		$info['from'] = $info['to'] - (count($passengers) - 1);
+		$flight = $this->table_flight_schedule->get_by_id($fs_id);
+		$accom = $this->table_airline_accomodation->
+			where('accom_id', $accom_id, 'al_id', $flight['al_id'])->get_single();
+		$this->table_booking->insert(array(
+			'bk_gross' => $accom['fare'],
+			'ps_id' => $ps_id,
+			'fs_id' => $fs_id,
+			'accom_id' => $accom_id
+		));
+		$data['bk_id'] = $this->table_booking->insert_id();
+		$data['accom'] = $accom;
 		echo json_encode($data);
 	}
-
-	function search_range() {
-		$from = $this->input->get('from');
-		$to = $this->input->get('to');
-
-		echo json_encode($this->table_booking->
-			where('bk_id >=', $from, 'bk_id <=', $to)->get_multiple());
-	}
-
 }

@@ -118,6 +118,9 @@ $autoload['model'] = array(
 	'table_accomodation',
 	'table_booking',
 	'table_passenger',
+	'table_airline_accomodation',
+	'table_airline',
+	'table_places',
 );
 
 

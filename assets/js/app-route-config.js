@@ -16,34 +16,47 @@ config(['$locationProvider', '$routeProvider', 'RouteDataProvider', function($lo
 			templateUrl: 'partials/landing.html',
 			controller: 'LandingController'
 		})
-		.when('/membership', {
+		// :ac_id/:al_id/:start_date/:end_date/:start_price/:end_price/:seats/:from/:to
+		.when('/flights', {
 			RouteData: {
-				activePage: 'Passenger'
+				activePage: 'Flight Schedules'
 			},
-			templateUrl: 'partials/membership.html'
-		})
-		.when('/booking', {
-			RouteData: {
-				activePage: 'Passenger'
-			},
-			templateUrl: 'partials/booking.html',
-			controller: 'BookingController'
+			templateUrl: 'partials/flights.html',
+			controller: 'FlightController'
 		})
 
-		.when('/itinerary/:bk_id_from/:bk_id_to', {
+		.when('/flights/:ac_id/:al_id/:start_date/:end_date/:start_price/:end_price/:seats/:from/:to', {
 			RouteData: {
-				activePage: 'Passenger',
+				activePage: 'Flight Schedules'
 			},
-			templateUrl: 'partials/itinerary.html',
-			controller: 'ItineraryController'
+			templateUrl: 'partials/flights.html',
+			controller: 'FlightController'
 		})
 
-		.when('/airline-companies', {
+		.when('/booking/entry/:sched_id', {
 			RouteData: {
-				activePage: 'Passenger'
+				activePage: 'Flight Schedules'
 			},
-			templateUrl: 'partials/airline-companies.html'
+			templateUrl: 'partials/booking-entry.html',
+			controller: 'BookingEntryController'
 		})
+
+		.when('/booking/summary', {
+			RouteData: {
+				activePage: 'Flight Schedules'
+			},
+			templateUrl: 'partials/booking-summary.html',
+			controller: 'BookingSummaryController'
+		})
+		
+		.when('/booking/number/:bk_id', {
+			RouteData: {
+				activePage: 'Flight Schedules'
+			},
+			templateUrl: 'partials/booking-number.html',
+			controller: 'BookingNumberController'
+		})
+
 		.when('/login', {
 			RouteData: {
 				activePage: 'Login'

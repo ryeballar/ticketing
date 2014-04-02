@@ -1,0 +1,105 @@
+<form class="flight-filter hide-slide">
+	<h2 class="header">Search Filter</h2>
+	<div class="row">
+		<div class="col-md-6">
+			<form-group>
+				<div class="row">
+					<div class="col-md-6">
+						<label for="sel-airline-company">Airline Company</label>
+						<select ng-model="ac_id" id="sel-airline-company" class="form-control"
+							ng-options="record.ac_id as record.ac_name for record in airlineCompanies">
+							<option value="">All Companies</option>
+						</select>
+					</div>
+					<div class="col-md-6">
+						<label for="sel-agency">Airline Company</label>
+						<select ng-model="agency_id" id="sel-agency" class="form-control"
+							ng-options="record.agency_id as record.agency_name for record in agencies">
+							<option value="">All Agencies</option>
+						</select>
+					</div>
+				</div>
+			</form-group>
+
+			<form-group>
+				<div class="row">
+					<div class="col-md-6"><label for="state-date">Departure Start</label><input type="date" ng-model="start_date" id="start-date" class="form-control"></div>
+					<div class="col-md-6"><label for="end-date">Departure End</label><input type="date" ng-model="end_date" id="end-date" class="form-control"></div>
+				</div>
+			</form-group>
+
+			<form-group>
+				<div class="row">
+					<div class="col-md-6"><label for="start-price">Start Price</label><input type="number" ng-model="price_start" min="{{price_min}}" max="{{price_max}}" id="start-price" class="form-control" ng-change="price_start = getPrice(price_start)"></div>
+	 				<div class="col-md-6"><label for="end-price">End Price</label><input type="number" ng-model="price_end" min="{{price_min}}" max="{{price_max}}" class="form-control" id="end-price" ng-change="price_end = getPrice(price_end)"></div>
+				</div>
+			</form-group>
+
+		</div>
+		<div class="col-md-6">
+			<form-group>
+				<div class="row">
+					<div class="col-md-6"><label for="available-seats">Available Seats (At Least)</label><input type="number" ng-model="available_seats" class="form-control" min="1" max="{{max_seats}}" ng-change="changeAvailableSeat()"></div>
+				</div>
+			</form-group>
+
+			<form group>
+				<div class="row">
+					<div class="col-md-6">
+						<label for="sel-from">Destination From</label>
+						<select ng-model="destination_from" id="sel-from" ng-options="record.place_id as record.place_name for record in places" class="form-control">
+							<option value="">All Places</option>
+						</select>
+					</div>
+					<div class="col-md-6">
+						<label for="sel-from">Destination To</label>
+						<select ng-model="destination_to" id="sel-to" ng-options="record.place_id as record.place_name for record in places" class="form-control">
+							<option value="">All Places</option>
+						</select>
+					</div>
+				</div>
+			</form-group>
+			<form-group>
+				<div class="row"><div class="col-md-12">
+					<br><br>
+					<a class="btn btn-primary" ng-click="search()">Search</a> 
+					<a class="btn btn-success" ng-click="reset()">Reset</a>
+				</div></div>
+			</form-group>
+		</div>
+	</div>
+</form>
+<hr>
+
+<div class="row" ng-repeat="flightGroup in flightGroupItem">
+	<div class="well flight-item col-md-4" ng-repeat="flight in flightGroup">
+		<div class="row">
+			<div class="col-md-6">
+				<h5 class="bold">Flight Details</h5>
+				<div ng-bind="flight.ac_name"></div>
+				<div ng-bind="flight.al_name"></div>
+				<div ng-bind="flight.fs_dep"></div>
+				<div>
+					<span ng-bind="flight.place_from"></span> - 
+					<span ng-bind="flight.place_to"></span>
+				</div>
+				<br>
+				<a class="btn btn-primary" ng-click="validate($event, flight.fs_id)">Book</a>
+			</div>
+			<div class="col-md-6">
+				<h5 class="bold">Accommodations</h5>
+				<div ng-if="flight.accomodations.length == 0">
+					<em>No accomodations</em>
+				</div>
+				<div ng-repeat="accom in flight.accomodations">
+					<input type="radio" ng-model="accomodation[flight.fs_id]" name="{{flight.fs_id}}" ng-value="accom"> 
+					<span ng-bind="accom.accom_desc"></span> -
+					<span class="bold">P<span ng-bind="accom.fare"></span></span>
+				</div>
+				<h5 class="bold">Agencies</h5>
+				<div ng-if="flight.agencies.length == 0"><em>No agencies associated</em></div>
+				<div><span ng-repeat="agency in flight.agencies" ng-bind="agency.agency_name"></span></div>
+			</div>
+		</div>
+	</div>
+</div>
