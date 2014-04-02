@@ -102,9 +102,11 @@ function($scope, $filter, $http, $routeParams, $location, $cookieStore) {
 
 	$scope.getPrice = getPrice;
 
-	$scope.validate = function(event, fs_id) {
+	$scope.validate = function(event, fs_id, flight) {
 		if(angular.isDefined($scope.accomodation[fs_id])) {
 			$cookieStore.put('accomodation', $scope.accomodation[fs_id]);
+			$cookieStore.put('flight', flight);
+			console.log('here: ', $cookieStore.get('flight'));
 			$location.path('booking/entry/' + fs_id);
 		} else {
 			event.preventDefault();
@@ -206,10 +208,6 @@ function($scope, $http, $cookieStore, $location) {
 		$scope.flight = data[0];
 	});
 
-	$scope.payNow = function() {
-
-	};
-
 	$scope.payLater = function() {
 		$http.post('ci/booking/save',{
 			passenger: passenger,
@@ -234,8 +232,50 @@ controller('BookingNumberController',
 ['$scope', '$routeParams',
 function($scope, $routeParams) {
 	$scope.bk_id = $routeParams.bk_id;
-}
-]).
+}]).
+
+controller('BookingPaypalLoginController', 
+['$scope', '$http', '$location',
+function($scope, $http, $location) {
+	$scope.submit = function(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		$location.path('booking/paypal-confirmation')
+	};
+}]).
+
+controller('BookingPaypalConfirmationController',
+['$scope', '$http', '$cookieStore', '$location',
+function($scope, $http, $cookieStore, $location) {
+	var flight = $cookieStore.get('flight');
+	var accom = $cookieStore.get('accomodation');
+	var passenger = $cookieStore.get('passenger');
+	var fs_id = $cookieStore.get('sched_id');
+	var accomodation = $cookieStore.get('accomodation');
+
+	$scope.payTo = flight.ac_name;
+	$scope.accom = accom;
+
+	$scope.payNow = function() {
+		$http.post('ci/booking/create_ticket',{
+			passenger: passenger,
+			fs_id: fs_id,
+			accom_id: accomodation.accom_id
+		}).success(function(data) {
+			console.log(data);
+			$location.path('booking/ticket/' + data.at_id);
+		}).error(function(msg) {
+			console.log(msg);
+		});
+
+	};
+}]).
+
+controller('BookingTicketController',
+['$scope', '$http', '$cookieStore', '$routeParams',
+function($scope, $http, $cookieStore, $routeParams) {
+	$scope.at_id = $routeParams.at_id;
+}]).
 
 filter('group', function() {
     return function(items, groupItems) {

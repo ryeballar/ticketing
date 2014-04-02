@@ -57,6 +57,30 @@ config(['$locationProvider', '$routeProvider', 'RouteDataProvider', function($lo
 			controller: 'BookingNumberController'
 		})
 
+		.when('/booking/paypal-login', {
+			RouteData: {
+				activePage: 'Flight Schedules'
+			},
+			templateUrl: 'partials/booking-login-paypal.html',
+			controller: 'BookingPaypalLoginController'
+		})
+
+		.when('/booking/paypal-confirmation', {
+			RouteData: {
+				activePage: 'Flight Schedules'
+			},
+			templateUrl: 'partials/booking-paypal-confirmation.html',
+			controller: 'BookingPaypalConfirmationController'
+		})
+
+		.when('/booking/ticket/:at_id', {
+			RouteData: {
+				activePage: 'Flight Schedules'
+			},
+			templateUrl: 'partials/booking-ticket.html',
+			controller: 'BookingTicketController'
+		})
+
 		.when('/login', {
 			RouteData: {
 				activePage: 'Login'

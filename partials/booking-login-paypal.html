@@ -1,0 +1,14 @@
+<div class="row" style="margin-top: 2em">
+	<div class="col-md-5 col-md-offset-4 well">
+		<div class="text-right"><img src="assets/img/paypal_logo.gif"></div>
+		<h4 class="text-warning">Log in to your PayPal account</h4><br>
+		<form ng-submit="submit($event)">
+			<label for="paypal-email">Email Address</label>
+			<input type="email" ng-model="paypal.email" placeholder="Enter email address" required class="form-control" autofocus><br>
+			<label>Password</label>
+			<input type="password" placeholder="Enter password" required class="form-control"><br>
+			<button type="submit" class="btn btn-warning">Login</button>
+			<a class="btn btn-danger">Cancel</a>
+		</form>
+	</div>
+</div>

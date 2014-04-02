@@ -18,7 +18,7 @@ class Flight extends CI_Controller {
 		$start_date = G('start_date');
 		$end_date = G('end_date');
 		$price_start = G('price_start');
-		$price_end = G('end_date');
+		$price_end = G('price_end');
 		$available_seats = G('available_seats');
 		$destination_from = G('destination_from');
 		$destination_to = G('destination_to');
@@ -40,10 +40,10 @@ class Flight extends CI_Controller {
 			$where['fs.fs_id = '] = $fs_id;
 		if($ac_id != false)
 			$where['ac.ac_id = '] = $ac_id;
-		/*if($start_date != false)
+		if($start_date != false)
 			$where['fs.fs_dep >= '] = $start_date;
 		if($end_date != false)
-			$where['fs.fs_dep <= '] = $end_date;*/
+			$where['fs.fs_dep <= '] = $end_date;
 
 		$count = count($where);
 		if(count($where) > 0) {
@@ -60,7 +60,7 @@ class Flight extends CI_Controller {
 			$query = $this->db->query($sql);
 
 		$data = array();
-		$alt_data = array();
+		$keys = array();
 		if($query->num_rows() > 0) {
 			$data = $query->result_array();
 			foreach($data as $key => $value) {
@@ -77,8 +77,20 @@ class Flight extends CI_Controller {
 				", array($value['al_id']));
 
 				$accom_data = array();
-				if($query->num_rows() > 0)
+				if($query->num_rows() > 0) {
 					$accom_data = $query->result_array();
+					if(!in_array($key, $keys)) { 
+						$price_start_valid = false;
+						$price_end_valid = false;
+						foreach($accom_data as $k => $v) {
+							if(!$price_start && $v['fare'] >= $price_start)
+								$price_start_valid = true;
+							if(!$price_start && $v['fare'] <= $price_end)
+								$price_end_valid = true;
+						}
+
+					}
+				}
 				$data[$key]['accomodations'] = $accom_data;
 
 				$query = $this->db->query("
@@ -94,10 +106,10 @@ class Flight extends CI_Controller {
 				if($query->num_rows() > 0) {
 					$agency_data = $query->result_array();
 					$data[$key]['agencies'] = $agency_data;
-					if($agency_id) {
-						foreach($agency_data as $key => $val) {
+					if($agency_id && !in_array($key, $keys)) {
+						foreach($agency_data as $k => $val) {
 							if($val['agency_id'] == $agency_id) {
-								$alt_data[] = $data[$key];
+								$keys[] = $key;
 								break;
 							}
 						}
@@ -108,10 +120,11 @@ class Flight extends CI_Controller {
 			}
 		}
 
-		if(count($alt_data) > 0)
-			echo json_encode($alt_data);
-		else
-			echo json_encode($data);
+		foreach(array_reverse($keys) as $key)
+			array_splice($data, $key, 1);
+
+		echo json_encode($data);
 	}
+
 
 }

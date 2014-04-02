@@ -121,6 +121,7 @@ $autoload['model'] = array(
 	'table_airline_accomodation',
 	'table_airline',
 	'table_places',
+	'table_airline_ticket'
 );
 
 
