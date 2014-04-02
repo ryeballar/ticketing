@@ -9,7 +9,7 @@ class Flight extends CI_Controller {
 	function index() {
 		$fs_id = G('fs_id');
 		$ac_id = G('ac_id');
-		$al_id = G('agency_id');
+		$agency_id = G('agency_id');
 		$start_date = G('start_date');
 		$end_date = G('end_date');
 		$price_start = G('price_start');
@@ -35,8 +35,6 @@ class Flight extends CI_Controller {
 			$where['fs.fs_id = '] = $fs_id;
 		if($ac_id != false)
 			$where['ac.ac_id = '] = $ac_id;
-		if($al_id != false)
-			$where['al.al_id = '] = $al_id;
 		/*if($start_date != false)
 			$where['fs.fs_dep >= '] = $start_date;
 		if($end_date != false)
@@ -57,6 +55,7 @@ class Flight extends CI_Controller {
 			$query = $this->db->query($sql);
 
 		$data = array();
+		$alt_data = array();
 		if($query->num_rows() > 0) {
 			$data = $query->result_array();
 			foreach($data as $key => $value) {
@@ -78,7 +77,7 @@ class Flight extends CI_Controller {
 				$data[$key]['accomodations'] = $accom_data;
 
 				$query = $this->db->query("
-					SELECT agency_name
+					SELECT a.agency_id, agency_name
 						FROM agency a
 						INNER JOIN airline_company_agency aca
 							ON a.agency_id = aca.agency_id
@@ -87,14 +86,27 @@ class Flight extends CI_Controller {
 						WHERE aca.ac_id = ?
 				", array($value['ac_id']));
 
-				$agency_data = array();
-				if($query->num_rows() > 0)
+				if($query->num_rows() > 0) {
 					$agency_data = $query->result_array();
-
-				$data[$key]['agencies'] = $agency_data;
+					$data[$key]['agencies'] = $agency_data;
+					if($agency_id) {
+						foreach($agency_data as $key => $val) {
+							if($val['agency_id'] == $agency_id) {
+								$alt_data[] = $data[$key];
+								break;
+							}
+						}
+					}
+				} else {
+					$data[$key]['agencies'] = array();
+				}
 			}
 		}
-		echo json_encode($data);
+
+		if(count($alt_data) > 0)
+			echo json_encode($alt_data);
+		else
+			echo json_encode($data);
 	}
 
 }

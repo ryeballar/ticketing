@@ -2,24 +2,22 @@
 	<h2 class="header">Search Filter</h2>
 	<div class="row">
 		<div class="col-md-6">
-			<form-group>
-				<div class="row">
-					<div class="col-md-6">
-						<label for="sel-airline-company">Airline Company</label>
-						<select ng-change="change()" ng-model="ac_id" id="sel-airline-company" class="form-control"
-							ng-options="record.ac_id as record.ac_name for record in airlineCompanies">
-							<option value="">All Companies</option>
-						</select>
-					</div>
-					<div class="col-md-6">
-						<label for="sel-agency">Airline Company</label>
-						<select ng-model="agency_id" id="sel-agency" class="form-control"
-							ng-options="record.agency_id as record.agency_name for record in agencies">
-							<option value="">All Agencies</option>
-						</select>
-					</div>
+			<div class="row">
+				<div class="col-md-6">
+					<label for="sel-airline-company">Airline Company</label>
+					<select ng-model="ac_id" id="sel-airline-company" class="form-control"
+						ng-options="record.ac_id as record.ac_name for record in airlineCompanies">
+						<option value="">All Companies</option>
+					</select>
 				</div>
-			</form-group>
+				<div class="col-md-6">
+					<label for="sel-agency">Airline Company</label>
+					<select ng-model="agency_id" id="sel-agency" class="form-control"
+						ng-options="record.agency_id as record.agency_name for record in agencies">
+						<option value="">All Agencies</option>
+					</select>
+				</div>
+			</div>
 
 			<form-group>
 				<div class="row">
