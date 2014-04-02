@@ -1,0 +1,10 @@
+<ol class="breadcrumb" style="margin: 0">
+	<li ng-repeat="step in steps">
+		<a class="pointer" 
+			ng-class="{disabled: $index > latest_step}"
+			ng-bind="step.label"
+			ng-click="goTo($index)"></a>
+		</li>
+</ol>
+
+<div ng-include="steps[steps_active].templateUrl"></div>

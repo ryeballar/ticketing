@@ -1,0 +1,75 @@
+<form name="form" ng-submit="continue($event)">
+	<div class="row mg-less">
+		<div class="col-md-4">
+			<h4>Book a trip</h4>
+			<form-group control="agency">
+				<label for="agency-index">Agency</label>
+				<select class="form-control" id="agency-index"
+					ng-model="data.agency"
+					 ng-options="record.agency_name for record in agencies"
+					 ng-change="selectAgency()">
+					<option value="">-- Select an Agency</option>
+				</select>
+			</form-group>
+			<form-group control="ac">
+				<label for="ac-index">Airline Companies</label>
+				<select class="form-control" id="ac-index"
+					ng-model="data.ac" required ng-change="selectAC()"
+					ng-options="record.ac_ac_name for record in airline_companies">
+					<option value="">-- Select an Airline Company</option>
+				</select>
+			</form-group>
+			<form-group>
+				<label for="dept-date">Choose Departure Date</label>
+				<input type="date" class="form-control" ng-model="data.dept_date" min="2014-31-01" required>
+			</form-group>
+
+		</div>
+		<div class="col-md-8">
+			<h4>Guest</h4>
+			<form-group control="guest_limit">
+				<label for="guest-limit">Number of Guests</label>
+				<div class="row"><div class="col-md-5">
+					<select ng-model="data.guest_limit" class="form-control" ng-change="changeGuests()">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+					</select>
+				</div></div>
+			</form-group>
+			<div ng-repeat="guest in data.guests" class="guest-forms">
+				<label class="label label-primary" ng-bind="'Guest ' + ($index + 1)"  style="margin-top: 0.5em; padding: 1em; display: inline-block"></label>
+				<div class="row">
+					<div class="col-md-6"><input type="text" ng-model="guest.ps_name" placeholder="Name" class="form-control" required maxlength="50"></div>
+					<div class="col-md-6"><input type="text" ng-model="guest.ps_address" placeholder="Address" class="form-control" required maxlength="50"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-6"><input type="text" ng-model="guest.ps_tel" placeholder="Telephone" class="form-control" required maxlength="50"></div>
+					<div class="col-md-6"><input type="text" ng-model="guest.ps_fax" placeholder="Fax" class="form-control" maxlength="50"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-6"><input type="email" ng-model="guest.ps_email" placeholder="Email" class="form-control" required maxlength="50"></div>
+					<div class="col-md-6"><input type="date" ng-model="guest.ps_bdate" placeholder="Birth Date" class="form-control" required></div>
+				</div>
+				<div class="row">
+					<div class="col-md-6"><input type="text" ng-model="guest.ps_contact_person" placeholder="Contact Person" class="form-control" required maxlength="50"></div>
+					<div class="col-md-6"><input type="text" ng-model="guest.ps_contact_tel" placeholder="Contact Tel" class="form-control" required maxlength="20"></div>
+				</div>
+			</div>
+
+			<div style="padding: 1em 0" ng-show="data.guests.length > 0">
+				<button type="submit" class="btn btn-primary">Continue</button>
+				<a class="btn btn-danger" ng-click="cancel()">Cancel</a>
+			</div>
+		</div>
+	</div>
+</form>

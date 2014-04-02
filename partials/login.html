@@ -1,0 +1,23 @@
+<div class="row std-view">
+	<div class="col-md-5 col-md-offset-4 form-container">
+		<h4>Login</h4>
+		Not yet registered? <a href="signup">Sign up</a> now!<br/><hr>
+		<form-validate url="ci/member/login" redirect="/signup">
+			<form-group control="member.member_email">
+				<label for="login-email">Email address</label>
+				<input type="text" class="form-control" id="signup-email" 
+					placeholder="Enter email"  autofocus form-control
+					ng-model="data.member.member_email" maxlength="50">
+			</form-group>
+			<form-group control="member.password">
+				<label for="login-password">Password</label>
+				<input type="password" class="form-control" id="signup-password" 
+					placeholder="Password" form-control
+					ng-model="data.member.password" maxlength="50">
+			</form-group>
+
+			<button type="submit" class="btn btn-default">Submit</button>
+			<a class="right" href="forgot-password">Forgot Password?</a>
+		</form-validate>
+	</div>
+</div>

@@ -1,0 +1,1 @@
+angular.module('app', ['ngRoute', 'ngResource', 'ui.bootstrap', 'pasvaz.bindonce', 'RouteData', 'ngCookies']);

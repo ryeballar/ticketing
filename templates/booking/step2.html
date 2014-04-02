@@ -1,0 +1,30 @@
+<div style="background-color: white; padding: 1em">
+
+<h3 class="text-center">Schedules</h3>
+
+<table class="table">
+	<tr>
+		<th>Airline Name</th>
+		<th>From</th>
+		<th>To</th>
+		<th>Departure</th>
+		<th>ETA</th>
+		<th>Accomodatoin</th>
+		<th>Fare</th>
+		<th>Action</th>
+	</tr>
+	<tr ng-repeat="sched in flight_schedules track by $index">
+		<td ng-bind="sched.al_al_name"></td>
+		<td ng-bind="sched.place_from.place_name"></td>
+		<td ng-bind="sched.place_to.place_name"></td>
+		<td ng-bind="sched.fs_fs_dep"></td>
+		<td ng-bind="sched.fd_fd_eta"></td>
+		<td>
+			<select ng-model="models[$index]"
+				ng-options="record.accom_accom_desc for record in sched.accomodations"></select>
+		</td>
+		<td ng-bind="models[$index].al_ac_fare"></td>
+		<td><a ng-click="select(sched, models[$index])" class="btn btn-primary">Select</a></td>
+	</tr>
+</table>
+</div>

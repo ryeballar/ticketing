@@ -1,0 +1,29 @@
+<h3 class="text-center">Ticket Summary</h3>
+<hr>
+
+<div class="row">
+	<div class="col-md-2 col-md-offset-4">
+		<h4 ng-bind="sched.ac_ac_name"></h4>
+		<h5 ng-bind="accom.accom_accom_desc"></h5>
+		<div>Fare: P<span ng-bind="accom.al_ac_fare"></span></div>
+		<h6 ng-bind="sched.al_al_name"></h6>
+		<p>
+			<span ng-bind="sched.place_from.place_name"></span> - 
+			<span ng-bind="sched.place_to.place_name"></span>
+		</p>
+		<p>
+			<span ng-bind="sched.fs_fs_dep"></span> - 
+			<span ng-bind="sched.fs_fs_arr"></span>
+		</p>
+	</div>
+	<div class="col-md-4">
+		<h4>Passengers</h4>
+		<div ng-repeat="guest in data.guests" ng-bind="guest.ps_name"></div>
+	</div>
+</div>
+
+<div class="text-center">
+	<a class="btn btn-primary" ng-click="payNow()">Pay Now</a>
+	<a class="btn btn-primary" ng-click="payLater()">Pay Later</a>
+</div>
+

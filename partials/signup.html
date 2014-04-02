@@ -1,0 +1,34 @@
+<div class="row std-view">
+	<div class="col-md-5 col-md-offset-4 form-container">
+		<h4>CREATE YOUR ACCOUNT</h4>
+		Already registered? <a href="login">Login</a> here.<br/><hr>
+		<form-validate url="ci/member/signup" redirect="/login">
+			<form-group control="member.member_name">
+				<label for="signup-name">Name</label>
+				<input type="text" class="form-control" id="signup-name" 
+					placeholder="Enter name" autofocus form-control
+					ng-model="data.member.member_name" maxlength="50">
+			</form-group>
+			<form-group control="member.member_email">
+				<label for="signup-email">Email address</label>
+				<input type="text" class="form-control" id="signup-email" 
+					placeholder="Enter email" form-control
+					ng-model="data.member.member_email" maxlength="50">
+			</form-group>
+			<form-group control="member.password">
+				<label for="signup-password">Password</label>
+				<input type="password" class="form-control" id="signup-password" 
+					placeholder="Password" form-control
+					ng-model="data.member.password" maxlength="50"
+					ng-change="errors.confirm_password = ''">
+			</form-group>
+			<form-group control="confirm_password">
+				<label for="signup-confirm-password">Confirm Password</label>
+				<input type="password" class="form-control" id="signup-confirm-password" 
+					placeholder="Confirm Password" form-control
+					ng-model="data.confirm_password" maxlength="50">
+			</form-group> 
+			<button type="submit" class="btn btn-default">Submit</button>
+		</form-validate>
+	</div>
+</div>
