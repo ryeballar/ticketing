@@ -6,6 +6,11 @@ class Flight extends CI_Controller {
 		parent::__construct();
 	}
 
+	function check() {
+		$data = $this->table_flight_schedule->where('fs_dep >= ', '2014-01-01')->get_multiple();
+		echo json_encode($data);
+	}
+
 	function index() {
 		$fs_id = G('fs_id');
 		$ac_id = G('ac_id');
