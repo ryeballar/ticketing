@@ -550,3 +550,7 @@ section[ng-view] {
 .text-margin {
 	margin-left: 1em;
 }
+
+.message:empty {
+	display: none !important;
+}

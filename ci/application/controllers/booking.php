@@ -29,6 +29,40 @@ class Booking extends CI_Controller {
 		));
 		$data['at_id'] = $this->table_airline_ticket->insert_id();
 		$data['accom'] = $accom;
+
+		$sql = "
+			SELECT distinct al.al_name, ac.ac_id, ac.ac_name, pf.place_name as place_from, pt.place_name as place_to, fs.fs_dep
+				FROM flight_schedule fs
+				INNER JOIN airline al
+					ON al.al_id = fs.al_id
+				INNER JOIN airline_company ac
+					ON ac.ac_id = al.ac_id
+				INNER JOIN flight_destination fd
+				 	ON fd.fd_id = fs.fd_id
+				INNER JOIN places pf
+					ON pf.place_id = fd.place_id_from
+				INNER JOIN places pt
+					ON pt.place_id = fd.place_id_to
+			WHERE fs.fs_id = ?
+		";
+
+		$query = $this->db->query($sql, array($fs_id));
+
+		if($query->num_rows() > 0) {
+			$flight_data = $query->row_array();
+
+			$email_message = $this->load->view('ticket-email', array(
+				'at_id' => $data['at_id'],
+				'flight' => $flight_data,
+				'passenger' => $passenger,
+				'accom' => $accom
+			), true);
+
+			$data['email'] = $this->email_model->send(
+				'New Ticket Created in Softeng Ticketing System', 
+				$email_message, array($passenger['ps_email']));
+		}
+
 		echo json_encode($data);
 	}
 
@@ -53,4 +87,5 @@ class Booking extends CI_Controller {
 		$data['accom'] = $accom;
 		echo json_encode($data);
 	}
+
 }

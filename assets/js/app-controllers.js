@@ -256,14 +256,20 @@ function($scope, $http, $cookieStore, $location) {
 	$scope.payTo = flight.ac_name;
 	$scope.accom = accom;
 
+	$scope.message = '';
+
 	$scope.payNow = function() {
+		$scope.message = 'Creating Ticket and Sending Email Information.. Please Wait..';
 		$http.post('ci/booking/create_ticket',{
 			passenger: passenger,
 			fs_id: fs_id,
 			accom_id: accomodation.accom_id
 		}).success(function(data) {
-			console.log(data);
-			$location.path('booking/ticket/' + data.at_id);
+			if(data.email.success == true) {
+				$location.path('booking/ticket/' + data.at_id);
+				$scope.message = '';
+			} else
+				$scope.message = 'A problem occured in processing your ticket, it is possible that you don\'t have internet connection. If that is not the problem then please contact the administrator';
 		}).error(function(msg) {
 			console.log(msg);
 		});
@@ -291,7 +297,7 @@ function($scope, $http, $cookieStore, $routeParams) {
 	}).success(function(data) {
 		$scope.flight = data[0];
 	});
-	
+
 }]).
 
 filter('group', function() {
